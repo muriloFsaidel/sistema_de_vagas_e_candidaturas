@@ -1,0 +1,76 @@
+instalar anaconda com interpretador python;
+
+dentro do anaconda powershell prompt como adm criar environment(ambiente) e ativá-lo:
+conda create -n pyqt python=3.8
+conda activate pyqt
+
+dentro do anaconda powershell prompt como adm instalar os pacotes:
+pip install pyqt5 pyqt5-tools mysql-connector-python --user
+
+instalar o wamp server, depois de instalado, botão direito sobre ele:
+mySQL-> mySqlConsole
+-> username root-> enter(dentro do console)
+-> create database sistema_de_vagas_e_candidaturas;
+-> use  sistema_de_vagas_e_candidaturas;
+-> crie as tabelas conforme abaixo:
+create table candidato (
+    id INT NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(45),
+    pretensao DOUBLE,
+    experiencia VARCHAR(400),
+    escolaridade VARCHAR(30),
+    emailCandidato VARCHAR(100),
+    PRIMARY KEY (id)
+    );
+
+    create table vaga(
+     id INT NOT NULL AUTO_INCREMENT,
+     nome VARCHAR(40),
+     faixa_salarial VARCHAR(60),
+     requisitos VARCHAR(400),
+     escolaridade_minima VARCHAR(70),
+     email_empresa VARCHAR(100),
+     PRIMARY KEY (id)
+ );
+    create table login(
+        id INT NOT NULL AUTO_INCREMENT,
+        tipo VARCHAR(30),
+        email VARCHAR(300),
+        senha VARCHAR(300),
+        PRIMARY KEY (id)
+    );
+
+
+    create table candidaturaVaga(
+        id INT NOT NULL AUTO_INCREMENT,
+        nomeVaga VARCHAR(40),
+        faixa_salarial VARCHAR(60),
+        requisitos VARCHAR(400),
+        escolaridade_minima VARCHAR(70),
+        email_empresa VARCHAR(100),
+        nomeCandidato VARCHAR(45),
+        pretensao DOUBLE,
+        experiencia VARCHAR(400),
+        escolaridade VARCHAR(30),
+        emailCandidato VARCHAR(100),
+        PRIMARY KEY (id)
+    );
+-> show tables;
+-> describe candidato;
+
+Obs: caso queira excluir as tabelas para recriá-las:
+drop table candidato,candidaturavaga,login,vaga;
+
+
+dentro do anaconda powershell prompt como adm, acesse a pasta program_executavel:
+cd SEU CAMINHO COMPLETO (conforme exemplo abaixo:)
+SUA UNIDADE DE DISCO:\Users\suaContaDeUsuario\DiretorioOndeFoiBaixado\Programa_executavel
+
+executar sistema_de_vagas_e_candidaturas:
+python  sistema_de_vagas_e_candidaturas.py
+
+caso precise desinstalar os pacotes usando pip:
+pip uninstall pyqt5 pyqt5-tools mysql-connector-python --user
+
+empresa:empresa1@hotmail.com
+candidato:candidato@hotmail.com
