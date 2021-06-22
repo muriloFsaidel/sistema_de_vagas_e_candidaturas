@@ -14,10 +14,14 @@ StringTipoLogin = ""
 def encaminharLogin(tipoUsuario):
     if tipoUsuario == "empresas":
         empresa_ou_candidato.close()
-        empresa_login.show()        
+        empresa_login.show() 
+        empresa_login.emailEmpresa.setText("")       
+        empresa_login.senhaEmpresa.setText("")
     else:
         empresa_ou_candidato.close()
         candidato_login.show()
+        candidato_login.emailCandidato.setText("")
+        candidato_login.senhaCandidato.setText("")
 
 def criarLogin(tipoLogin):
         email = candidato_login.emailCandidato.text()
@@ -26,7 +30,7 @@ def criarLogin(tipoLogin):
         comandoSql1="SELECT email FROM login WHERE email = "
         comandoSql1= comandoSql1+"'"+str(email)+"'"
         #dados1 = (str(email))
-        print(comandoSql1)
+        #print(comandoSql1)
         cursor.execute(comandoSql1)
         dados_lidos1= cursor.fetchall()
         #print(dados_lidos1)
@@ -53,7 +57,7 @@ def criarLoginEmpresa(tipoLogin):
         comandoSql1="SELECT email FROM login WHERE email = "
         comandoSql1= comandoSql1+"'"+str(email)+"'"
         #dados1 = (str(email))
-        print(comandoSql1)
+        #print(comandoSql1)
         cursor.execute(comandoSql1)
         dados_lidos1= cursor.fetchall()
         #print(dados_lidos1)
@@ -70,7 +74,7 @@ def criarLoginEmpresa(tipoLogin):
             menuEmpresas.show()
 
         else:
-            candidato_login.mensagemCadastroOuEntrar.setText("Empresa já cadastrado, favor fazer login")
+            empresa_login.mensagemCadastroOuEntrar.setText("Empresa já cadastrada, favor fazer login")
             #print(stringEmailUsuario,StringTipoLogin)
 
 def fazerLogin():
@@ -173,12 +177,14 @@ def mostrarVagasParaCandidato():
 def mostrarVagasParaEmpresa():
     menuEmpresas.close()
     MuralVagasCandidatoEmpresas.show()
+    email_empresa = MuralVagasCandidatoEmpresas.emailEmpresaMuralVagasComCandidatos.text()
 
     cursor = banco.cursor()
-    comando_SQL = "SELECT * FROM candidaturaVaga"
+    comando_SQL = "SELECT * FROM candidaturaVaga WHERE email_empresa = '"+email_empresa+"'"
     cursor.execute(comando_SQL)
     #salvando registros da tabela na variável
     dados_lidos = cursor.fetchall()
+    #print(dados_lidos)
     #atribuindo quantidade de registros por linha e coluna
     MuralVagasCandidatoEmpresas.tableWidget.setRowCount(len(dados_lidos))
     MuralVagasCandidatoEmpresas.tableWidget.setColumnCount(11)
@@ -303,20 +309,27 @@ def voltarMenuEmpesas():
     menuEmpresas.show()
 
 def voltarMenuEmpresasDoEditarVagas():
-     MuralVagasCandidatoEmpresas.codigoVagaMuralComCandidatos.setText("")
-     MuralVagasCandidatoEmpresas.close()
-     menuEmpresas.show()
+    MuralVagasCandidatoEmpresas.cargoVagaMuralComCandidatos.setText("")
+    MuralVagasCandidatoEmpresas.emailEmpresaMuralVagasComCandidatos.setText("")
+    #varrendo dados
+    for i in range(0, 1):
+            for j in range(0, 1):
+                #atribuindo os dados ao item da tabela baseado na linha e na coluna
+                MuralVagasCandidatoEmpresas.tableWidget.setItem(i,j,QtWidgets.QTableWidgetItem(""))
+     
+    MuralVagasCandidatoEmpresas.close()
+    menuEmpresas.show()
 
 def excluirVaga():
-    codigoVaga = MuralVagasCandidatoEmpresas.codigoVagaMuralComCandidatos.text()
+    cargoVaga = str(MuralVagasCandidatoEmpresas.cargoVagaMuralComCandidatos.text())
     emailEmpresa = str(MuralVagasCandidatoEmpresas.emailEmpresaMuralVagasComCandidatos.text())
 
     cursor = banco.cursor()
-    comandoSql= "DELETE FROM candidaturaVaga WHERE id="+codigoVaga
+    comandoSql= "DELETE FROM candidaturaVaga WHERE nomeVaga='"+cargoVaga+"' and  email_empresa='"+emailEmpresa+"'"
     cursor.execute(comandoSql)
 
     cursor = banco.cursor()
-    comandoSql2= "DELETE FROM vaga WHERE email_empresa='"+emailEmpresa+"'"
+    comandoSql2= "DELETE FROM vaga WHERE nome='"+cargoVaga+"' and email_empresa='"+emailEmpresa+"'"
     cursor.execute(comandoSql2)
     banco.commit()
 
@@ -335,11 +348,103 @@ def excluirVaga():
             #atribuindo os dados ao item da tabela baseado na linha e na coluna
             MuralVagasCandidatoEmpresas.tableWidget.setItem(i,j,QtWidgets.QTableWidgetItem(str(dados_lidos[i][j])))
 
-    MuralVagasCandidatoEmpresas.codigoVagaMuralComCandidatos.setText("")
+    MuralVagasCandidatoEmpresas.cargoVagaMuralComCandidatos.setText("")
     MuralVagasCandidatoEmpresas.emailEmpresaMuralVagasComCandidatos.setText("")
 
 def encerrar():
     empresa_ou_candidato.close()
+
+def chamarVagaEdition():
+    email_mural = MuralVagasCandidatoEmpresas.emailEmpresaMuralVagasComCandidatos.text()
+    cargo = MuralVagasCandidatoEmpresas.cargoVagaMuralComCandidatos.text()
+    EditarVaga.show()
+
+    cursor = banco.cursor()
+    comando_SQL2 = "SELECT * FROM vaga WHERE email_empresa = '"+email_mural+"' and nome = '"+cargo+"'"
+    cursor.execute(comando_SQL2)
+    dados_lidos_5 = cursor.fetchall()
+    #print(dados_lidos_5)
+    idVagaSql = str(dados_lidos_5[0][0])
+    nomeVagaSql = dados_lidos_5[0][1]
+    #faixa_salarialSql = dados_lidos_5[0][2]
+    requisitosSql = dados_lidos_5[0][3]
+    #escolaridadeMínima = dados_lidos_5[0][4]
+    email_empresaSql = dados_lidos_5[0][5]
+
+    EditarVaga.nomeVagaEdition.setText(nomeVagaSql)
+    EditarVaga.requisitosEdition.setText(requisitosSql)
+    EditarVaga.emailEmpresaVagaEdition.setText(email_empresaSql)
+    EditarVaga.codigoVagaEdition.setText(idVagaSql)
+
+def updateOpening():
+    #codigoVagaEdition = EditarVaga.codigoVagaEdition.text()
+    nomeVagaEdition = EditarVaga.nomeVagaEdition.text()
+    requisitosEdition = EditarVaga.requisitosEdition.toPlainText()
+    email_empresaEdition = EditarVaga.emailEmpresaVagaEdition.text()
+    #email_mural = MuralVagasCandidatoEmpresas.emailEmpresaMuralVagasComCandidatos.text()
+
+
+    faixa_salarialEdition = ""
+    escolaridadeEdition= ""
+
+    if EditarVaga.rb1000Edition.isChecked():
+        faixa_salarialEdition = "até 1000"
+        #print("faixa salarial ",faixa_salarial,"foi selecionada")
+    elif EditarVaga.rb10002000Edition.isChecked():
+        faixa_salarialEdition = "de 1000 até 2000"
+        #print("faixa salarial ",faixa_salarial,"foi selecionada")        
+    elif EditarVaga.rb20003000Edition.isChecked():
+        faixa_salarialEdition= "de 2000 até 3000"
+        #print("faixa salarial ",faixa_salarial,"foi selecionada")                
+    elif EditarVaga.rbmaior3000Edition.isChecked():
+        faixa_salarialEdition = "acima de 3000"
+        #print("faixa salarial ",faixa_salarial,"foi selecionada")                        
+    
+    if EditarVaga.rbfundamentalEdition.isChecked():
+        escolaridadeEdition ="Ensino fundamental"
+        #print(escolaridade)
+    elif EditarVaga.rbEnsinoMedioEdition.isChecked():
+        escolaridadeEdition ="Ensino médio"
+        #print(escolaridade)
+    elif EditarVaga.rvTecnologoEdition.isChecked():   
+        escolaridadeEdition="Tecnólogo"
+        #print(escolaridade)
+    elif EditarVaga.rbEnsinoSuperiorEdition.isChecked():
+        escolaridadeEdition="Ensino Superior"
+        #print(escolaridade)
+    elif EditarVaga.rbPosEdition.isChecked():
+        escolaridadeEdition="Pós / MBA / Mestrado"
+        #print(escolaridade)
+    else:  
+        escolaridadeEdition="Doutorado"  
+        #print(escolaridade)
+
+
+    email_mural = MuralVagasCandidatoEmpresas.emailEmpresaMuralVagasComCandidatos.text()
+    cargo = MuralVagasCandidatoEmpresas.cargoVagaMuralComCandidatos.text()
+    
+    cursor = banco.cursor()
+    comando_SQL = "UPDATE candidaturavaga SET nomeVaga = '"+str(nomeVagaEdition)+"', faixa_salarial = '"+faixa_salarialEdition+"', requisitos = '"+str(requisitosEdition)+"', escolaridade_minima = '"+escolaridadeEdition+"',email_empresa = '"+str(email_empresaEdition)+"' WHERE nomeVaga='"+cargo+"' and email_empresa='"+email_mural+"'"
+    #dados = (str(nomeVagaEdition),faixa_salarialEdition,str(requisitosEdition),escolaridadeEdition,str(email_empresaEdition))
+    cursor.execute(comando_SQL)
+    #print(comando_SQL)
+
+    cursor = banco.cursor()
+    comando_SQL3 = "UPDATE vaga SET nome = '"+str(nomeVagaEdition)+"', faixa_salarial = '"+faixa_salarialEdition+"', requisitos = '"+str(requisitosEdition)+"', escolaridade_minima = '"+escolaridadeEdition+"',email_empresa = '"+str(email_empresaEdition)+"' WHERE nome='"+cargo+"' and email_empresa='"+email_mural+"'"
+    #dados3 = (str(nomeVagaEdition),faixa_salarialEdition,str(requisitosEdition),escolaridadeEdition,str(email_empresaEdition))
+    cursor.execute(comando_SQL3)
+    #print(comando_SQL)
+    banco.commit()
+
+    EditarVaga.nomeVagaEdition.setText("")
+    EditarVaga.requisitosEdition.setText("")
+    EditarVaga.emailEmpresaVagaEdition.setText("")
+    EditarVaga.codigoVagaEdition.setText("")
+
+    EditarVaga.close()
+    MuralVagasCandidatoEmpresas.show()
+    mostrarVagasParaEmpresa()
+
 
 app = QtWidgets.QApplication([])    
 empresa_ou_candidato = uic.loadUi("EmpresaOuCandidato.ui")
@@ -371,7 +476,11 @@ cadastrar_empresas_ui.pbCriarVaga.clicked.connect(lambda:cadastrar_vagas())
 cadastrar_empresas_ui.pbVoltar.clicked.connect(lambda:voltarMenuEmpesas())
 MuralVagasCandidatoEmpresas = uic.loadUi("MuralVagasCandidatoEmpresas.ui")
 MuralVagasCandidatoEmpresas.ExcluirVagaComCandidato.clicked.connect(lambda:excluirVaga())
+MuralVagasCandidatoEmpresas.pbConsultarMuralVagasComCandidatos_2.clicked.connect(lambda:mostrarVagasParaEmpresa())
 MuralVagasCandidatoEmpresas.pbVolarMuralVagasComCandidatos.clicked.connect(lambda:voltarMenuEmpresasDoEditarVagas())
+MuralVagasCandidatoEmpresas.pbEditarVagaComCandidato.clicked.connect(lambda:chamarVagaEdition())
+EditarVaga = uic.loadUi("EditarVaga.ui")
+EditarVaga.pbEditarVaga.clicked.connect(lambda:updateOpening())
 
 
 empresa_ou_candidato.show()

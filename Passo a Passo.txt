@@ -74,3 +74,9 @@ pip uninstall pyqt5 pyqt5-tools mysql-connector-python --user
 
 empresa:empresa1@hotmail.com
 candidato:candidato@hotmail.com
+
+caso queira mais candidatos e mais vagas, segue o exemplo:
+candidato1@hotmail.com (técnico de operações)
+candidato2@hotmail.com (Treinador de Academia)
+candidato3@hotmail.com (Treinador de Academia)
+

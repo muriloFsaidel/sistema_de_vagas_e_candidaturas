@@ -143,6 +143,26 @@ color: rgb(3, 28, 255);</string>
      <string>cadastrar</string>
     </property>
    </widget>
+   <widget class="QLabel" name="mensagemCadastroOuEntrar">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>350</y>
+      <width>511</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
